@@ -8,7 +8,45 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
-      const activities = await response.json();
+      const activities = {
+        ...(await response.json()),
+        "Futebol": {
+          description: "Participe de partidas amistosas de futebol.",
+          schedule: "Segundas e quartas, 16h",
+          max_participants: 20,
+          participants: [],
+        },
+        "Vôlei": {
+          description: "Treinos e jogos recreativos de vôlei.",
+          schedule: "Terças e quintas, 16h",
+          max_participants: 16,
+          participants: [],
+        },
+        "Pintura": {
+          description: "Explore técnicas de pintura e criatividade.",
+          schedule: "Segundas, 15h",
+          max_participants: 12,
+          participants: [],
+        },
+        "Teatro": {
+          description: "Pratique interpretação, expressão e improvisação.",
+          schedule: "Quartas, 15h",
+          max_participants: 12,
+          participants: [],
+        },
+        "Clube de xadrez": {
+          description: "Desenvolva estratégia em partidas de xadrez.",
+          schedule: "Terças, 14h",
+          max_participants: 16,
+          participants: [],
+        },
+        "Clube de leitura": {
+          description: "Leia e discuta livros com outros estudantes.",
+          schedule: "Quintas, 14h",
+          max_participants: 14,
+          participants: [],
+        },
+      };
 
       // Clear loading message
       activitiesList.innerHTML = "";
@@ -40,6 +78,22 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching activities:", error);
     }
   }
+
+  // Validate student is not already signed up
+  async function isStudentSignedUp(activity, email) {
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/is_signed_up?email=${encodeURIComponent(email)}`
+      );
+      const result = await response.json();
+      return result.signed_up;
+    } catch (error) {
+      console.error("Error checking if student is signed up:", error);
+      return false;
+    }
+  }
+
+
 
   // Handle form submission
   signupForm.addEventListener("submit", async (event) => {
